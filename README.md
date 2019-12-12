@@ -45,11 +45,11 @@ Additionally, `/mnt/ubi/rc.local` must exist and must call to `/home/user/bootst
 
 For your native platform:
 
-    `./build.sh`
+    ./build.sh
 
 For a Linux, ARM-based platform:
 
-    `GOOS=linux GOARCH=arm ./build.sh`
+    GOOS=linux GOARCH=arm ./build.sh
 
 ## How do I test it?
 
