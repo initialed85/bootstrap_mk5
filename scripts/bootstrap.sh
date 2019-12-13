@@ -1,7 +1,6 @@
 #!/usr/bin/env bash
 
 set -x
-
 set -e
 
 SCRIPT_DIR=$(dirname "$(readlink -f "${0}")")
@@ -21,21 +20,19 @@ trap 'catch' ERR
 cd "${SCRIPT_DIR}"
 
 #
-# things you may want to change
+# things you may want to change (if you move the wildcard octet, you'll need to adjust the octet settings further down)
 #
 
 WAVE_INTERFACE=wave-data
-WAVE_DATA_BASE_IP=192.168.234.x
+WAVE_DATA_BASE_IP=172.16.137.x
 WAVE_DATA_NETMASK=255.255.255.0
-WAVE_DATA_BROADCAST_IP=192.168.234.255
-WAVE_DATA_BASE_GW_IP=192.168.234.1
 
 ETH_INTERFACE=eth0
 ETH_BASE_IP=192.168.x.1
 ETH_NETMASK=255.255.255.0
 ETH_PREFIX=24
 
-# modulation and coding schemes
+# MCS rate options (same as 802.11a)
 # MK2MCS_R12BPSK  - 6 Mbps
 # MK2MCS_R34BPSK  - 9 Mbps
 # MK2MCS_R12QPSK  - 12 Mbps
@@ -63,9 +60,12 @@ RADIO=A
 
 WAVE_DATA_MAC_ADDR=$(./generate_mac -interfaceName ${ETH_INTERFACE})
 WAVE_DATA_IP_ADDR=$(./generate_ip -baseIPAddr ${WAVE_DATA_BASE_IP} -identifierOctet 4 -interfaceName ${ETH_INTERFACE})
+WAVE_DATA_BROADCAST_IP=$(./generate_ip -baseIPAddr "${WAVE_DATA_IP_ADDR}" -identifierOctet 4 -specificIdentifier 255)
+WAVE_DATA_BASE_GW_IP=$(./generate_ip -baseIPAddr "${WAVE_DATA_IP_ADDR}" -identifierOctet 4 -specificIdentifier 1)
+
 ETH_IP_ADDR=$(./generate_ip -baseIPAddr ${ETH_BASE_IP} -identifierOctet 3 -interfaceName ${ETH_INTERFACE})
 ETH_BROADCAST_IP=$(./generate_ip -baseIPAddr "${ETH_IP_ADDR}" -identifierOctet 4 -specificIdentifier 255)
-ETH_BASE_NETWORK_IP=$(./generate_ip -baseIPAddr "${ETH_IP_ADDR}" -identifierOctet 4 -specificIdentifier 0)
+ETH_NETWORK_IP=$(./generate_ip -baseIPAddr "${ETH_IP_ADDR}" -identifierOctet 4 -specificIdentifier 0)
 
 #
 # things you should not change
@@ -75,7 +75,7 @@ rmmod ieee1609dot3 || true
 rmmod ieee1609dot4 || true
 insmod /opt/cohda/drivers/ieee1609dot4.ko mac=1
 
-# ethertype 0x88b6 is some one available for development / experimentation
+# ethertype 0x88b6 is one available for development / experimentation (used by Cohda I think?)
 # ethertype 0x86dd is IPv6
 # ethertype 0x0800 is IPv4
 # ethertype 0x0806 is ARP
@@ -96,11 +96,12 @@ chconfig \
   --Radio ${RADIO} \
   --MACAddr "${WAVE_DATA_MAC_ADDR}"
 
-ifconfig ${WAVE_INTERFACE} "${WAVE_DATA_IP_ADDR}" netmask ${WAVE_DATA_NETMASK} broadcast ${WAVE_DATA_BROADCAST_IP}
+ifconfig ${WAVE_INTERFACE} "${WAVE_DATA_IP_ADDR}" netmask ${WAVE_DATA_NETMASK} broadcast "${WAVE_DATA_BROADCAST_IP}"
 
-ifconfig ${ETH_INTERFACE} "${ETH_IP_ADDR}" netmask ${ETH_NETMASK} broadcast ${ETH_BROADCAST_IP}
+ifconfig ${ETH_INTERFACE} "${ETH_IP_ADDR}" netmask ${ETH_NETMASK} broadcast "${ETH_BROADCAST_IP}"
 
-./add_routes -baseDstIPAddr ${ETH_BASE_NETWORK_IP} -dstIdentifierOctet 3 -dstPrefix ${ETH_PREFIX} \
-  -baseGwIPAddr ${WAVE_DATA_BASE_GW_IP} -gwIdentifierOctet 4 -startIdentifier 1 -stopIdentifier 254
+./add_routes -baseDstIPAddr "${ETH_NETWORK_IP}" -dstIdentifierOctet 3 -dstPrefix ${ETH_PREFIX} \
+  -baseGwIPAddr "${WAVE_DATA_BASE_GW_IP}" -gwIdentifierOctet 4 -startIdentifier 1 -stopIdentifier 254 \
+  -skipDstIPAddr "${ETH_NETWORK_IP}" -skipGwIPAddr "${WAVE_DATA_IP_ADDR}"
 
 popd
