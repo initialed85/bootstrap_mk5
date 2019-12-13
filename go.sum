@@ -1,3 +1,5 @@
+github.com/initialed85/castinator v0.0.0-20191213024450-844773e19554 h1:OqMrzgMKQFf9l85TEbpuz2r5JUXKYF055AiZcaUK9FI=
+github.com/initialed85/castinator v0.0.0-20191213024450-844773e19554/go.mod h1:BCRiERxDXlaba2U0p/bHcPpu18SRp0zJZVFSsoN98eQ=
 github.com/vishvananda/netlink v1.0.0 h1:bqNY2lgheFIu1meHUFSH3d7vG93AFyqg3oGbJCOJgSM=
 github.com/vishvananda/netlink v1.0.0/go.mod h1:+SR5DhBJrl6ZM7CoCKvpw5BKroDKQ+PJqOg65H/2ktk=
 github.com/vishvananda/netns v0.0.0-20191106174202-0a2b9b5464df h1:OviZH7qLw/7ZovXvuNyL3XQl8UFofeikI1NW1Gypu7k=

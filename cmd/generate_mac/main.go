@@ -1,13 +1,15 @@
 package main
 
 import (
-	"bootstrap_mk5/pkg/generate"
 	"flag"
 	"fmt"
+	"github.com/initialed85/bootstrap_mk5/pkg/generate"
 	"log"
 )
 
 func main() {
+	log.SetFlags(log.Ldate | log.Ltime | log.Lmicroseconds | log.Lshortfile)
+
 	interfaceName := flag.String("interfaceName", "", "Name of interface to use as seed for MAC generation")
 
 	flag.Parse()

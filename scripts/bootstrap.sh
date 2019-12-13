@@ -23,14 +23,16 @@ cd "${SCRIPT_DIR}"
 # things you may want to change (if you move the wildcard octet, you'll need to adjust the octet settings further down)
 #
 
-WAVE_INTERFACE=wave-data
-WAVE_DATA_BASE_IP=172.16.137.x
-WAVE_DATA_NETMASK=255.255.255.0
-
 ETH_INTERFACE=eth0
 ETH_BASE_IP=192.168.x.1
 ETH_NETMASK=255.255.255.0
 ETH_PREFIX=24
+ETH_PORT=13337
+
+WAVE_DATA_INTERFACE=wave-data
+WAVE_DATA_BASE_IP=172.16.137.x
+WAVE_DATA_NETMASK=255.255.255.0
+WAVE_DATA_PORT=13337
 
 # MCS rate options (same as 802.11a)
 # MK2MCS_R12BPSK  - 6 Mbps
@@ -58,14 +60,14 @@ BW=MK2BW_10MHz
 RX_ANT=3
 RADIO=A
 
+ETH_IP_ADDR=$(./generate_ip -baseIPAddr ${ETH_BASE_IP} -identifierOctet 3 -interfaceName ${ETH_INTERFACE})
+ETH_BROADCAST_IP=$(./generate_ip -baseIPAddr "${ETH_IP_ADDR}" -identifierOctet 4 -specificIdentifier 255)
+ETH_NETWORK_IP=$(./generate_ip -baseIPAddr "${ETH_IP_ADDR}" -identifierOctet 4 -specificIdentifier 0)
+
 WAVE_DATA_MAC_ADDR=$(./generate_mac -interfaceName ${ETH_INTERFACE})
 WAVE_DATA_IP_ADDR=$(./generate_ip -baseIPAddr ${WAVE_DATA_BASE_IP} -identifierOctet 4 -interfaceName ${ETH_INTERFACE})
 WAVE_DATA_BROADCAST_IP=$(./generate_ip -baseIPAddr "${WAVE_DATA_IP_ADDR}" -identifierOctet 4 -specificIdentifier 255)
 WAVE_DATA_BASE_GW_IP=$(./generate_ip -baseIPAddr "${WAVE_DATA_IP_ADDR}" -identifierOctet 4 -specificIdentifier 1)
-
-ETH_IP_ADDR=$(./generate_ip -baseIPAddr ${ETH_BASE_IP} -identifierOctet 3 -interfaceName ${ETH_INTERFACE})
-ETH_BROADCAST_IP=$(./generate_ip -baseIPAddr "${ETH_IP_ADDR}" -identifierOctet 4 -specificIdentifier 255)
-ETH_NETWORK_IP=$(./generate_ip -baseIPAddr "${ETH_IP_ADDR}" -identifierOctet 4 -specificIdentifier 0)
 
 #
 # things you should not change
@@ -96,12 +98,15 @@ chconfig \
   --Radio ${RADIO} \
   --MACAddr "${WAVE_DATA_MAC_ADDR}"
 
-ifconfig ${WAVE_INTERFACE} "${WAVE_DATA_IP_ADDR}" netmask ${WAVE_DATA_NETMASK} broadcast "${WAVE_DATA_BROADCAST_IP}"
+ifconfig ${WAVE_DATA_INTERFACE} "${WAVE_DATA_IP_ADDR}" netmask ${WAVE_DATA_NETMASK} broadcast "${WAVE_DATA_BROADCAST_IP}"
 
 ifconfig ${ETH_INTERFACE} "${ETH_IP_ADDR}" netmask ${ETH_NETMASK} broadcast "${ETH_BROADCAST_IP}"
 
 ./add_routes -baseDstIPAddr "${ETH_NETWORK_IP}" -dstIdentifierOctet 3 -dstPrefix ${ETH_PREFIX} \
   -baseGwIPAddr "${WAVE_DATA_BASE_GW_IP}" -gwIdentifierOctet 4 -startIdentifier 1 -stopIdentifier 254 \
   -skipDstIPAddr "${ETH_NETWORK_IP}" -skipGwIPAddr "${WAVE_DATA_IP_ADDR}"
+
+nohup ./castinator -leftIntfcName "${ETH_INTERFACE}" -leftUDPAddr "${ETH_BROADCAST_IP}":${ETH_PORT} \
+  -rightIntfcName "${WAVE_DATA_INTERFACE}" -rightUDPAddr "${WAVE_DATA_BROADCAST_IP}":${WAVE_DATA_PORT} >/tmp/castinator.log &
 
 popd

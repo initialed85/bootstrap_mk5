@@ -1,14 +1,16 @@
 package main
 
 import (
-	"bootstrap_mk5/pkg/generate"
-	"bootstrap_mk5/pkg/route"
 	"flag"
+	"github.com/initialed85/bootstrap_mk5/pkg/generate"
+	"github.com/initialed85/bootstrap_mk5/pkg/route"
 	"log"
 	"strings"
 )
 
 func main() {
+	log.SetFlags(log.Ldate | log.Ltime | log.Lmicroseconds | log.Lshortfile)
+
 	baseDstIPAddr := flag.String("baseDstIPAddr", "", "IP address to use as a base for the destination (e.g. 192.168.2.0)")
 	dstIdentifierOctet := flag.Int("dstIdentifierOctet", 0, "Octet of base destination IP address to replace with the identifier (1 - 4 inclusive)")
 	dstPrefix := flag.Int("dstPrefix", -1, "IP prefix to use with the destination (e.g. 24)")

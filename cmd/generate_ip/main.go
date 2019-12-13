@@ -1,14 +1,16 @@
 package main
 
 import (
-	"bootstrap_mk5/pkg/generate"
 	"flag"
 	"fmt"
+	"github.com/initialed85/bootstrap_mk5/pkg/generate"
 	"log"
 	"strings"
 )
 
 func main() {
+	log.SetFlags(log.Ldate | log.Ltime | log.Lmicroseconds | log.Lshortfile)
+
 	baseIPAddr := flag.String("baseIPAddr", "", "IP address to use as a base (e.g. 192.168.234.1)")
 	identifierOctet := flag.Int("identifierOctet", 0, "Octet of base IP address to replace with the identifier (1 - 4 inclusive)")
 	specificIdentifier := flag.Int("specificIdentifier", -1, "Specific identifier to use (cannot be used with -interfaceName)")

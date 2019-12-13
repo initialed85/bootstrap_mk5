@@ -11,6 +11,7 @@ This repo contains some tools and scripts to bootstrap a Cohda MK5 for 802.11p o
         - Set the `wave-data` IP
         - Set the `eth0` IP
         - Create routes for all 253 other possible nodes
+        - relay broadcasts on port 6291 between eth0 and wave-data (avoiding loops)
 
 ## What are the components?
 
@@ -26,17 +27,20 @@ This repo contains some tools and scripts to bootstrap a Cohda MK5 for 802.11p o
         - Command line tool to generate an IP address (from a MAC address)
     - `add_routes`
         - Command line tool to add routes (within some guidelines)
+    - `castinator`
+        - Command line tool to relay UDP packets from one address to another
 - `scripts`
     - `bootstrap.sh`
         - The script that pulls it all together
 
-## What gets deployed?
+## What needs to be deployed?
 
 - `/home/user`
     - `bootstrap_mk5`
         - `generate_mac`
         - `generate_ip`
         - `add_routes`
+        - `castinator`
         - `bootstrap.sh`
 
 Additionally, `/mnt/ubi/rc.local` must exist and must call to `/home/user/bootstrap_mk5/bootstrap.sh`
