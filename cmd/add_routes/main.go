@@ -10,12 +10,12 @@ import (
 
 func main() {
 	baseDstIPAddr := flag.String("baseDstIPAddr", "", "IP address to use as a base for the destination (e.g. 192.168.2.0)")
-	dstIdentifierOctet := flag.Int("dstIdentifierOctet", 0, "octet of base destination IP address to replace with the identifier (1 - 4 inclusive)")
+	dstIdentifierOctet := flag.Int("dstIdentifierOctet", 0, "Octet of base destination IP address to replace with the identifier (1 - 4 inclusive)")
 	dstPrefix := flag.Int("dstPrefix", -1, "IP prefix to use with the destination (e.g. 24)")
 	baseGwIPAddr := flag.String("baseGwIPAddr", "", "IP address to use as a base for the gateway (e.g. 192.168.234.0)")
-	gwIdentifierOctet := flag.Int("gwIdentifierOctet", 0, "octet of base gateway IP address to replace with the identifier (1 - 4 inclusive)")
-	startIdentifier := flag.Int("startIdentifier", -1, "identifier to start at (0 - 255 inclusive)")
-	stopIdentifier := flag.Int("stopIdentifier", -1, "identifier to stop at (0 - 255 inclusive)")
+	gwIdentifierOctet := flag.Int("gwIdentifierOctet", 0, "Octet of base gateway IP address to replace with the identifier (1 - 4 inclusive)")
+	startIdentifier := flag.Int("startIdentifier", -1, "Identifier to start at (0 - 255 inclusive)")
+	stopIdentifier := flag.Int("stopIdentifier", -1, "Identifier to stop at (0 - 255 inclusive)")
 
 	flag.Parse()
 

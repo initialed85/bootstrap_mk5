@@ -25,16 +25,14 @@ cd "${SCRIPT_DIR}"
 #
 
 WAVE_INTERFACE=wave-data
-WAVE_DATA_BASE_IP=192.168.234.0
+WAVE_DATA_BASE_IP=192.168.234.x
 WAVE_DATA_NETMASK=255.255.255.0
 WAVE_DATA_BROADCAST_IP=192.168.234.255
 WAVE_DATA_BASE_GW_IP=192.168.234.1
 
 ETH_INTERFACE=eth0
-ETH_BASE_IP=192.168.0.1
+ETH_BASE_IP=192.168.x.1
 ETH_NETMASK=255.255.255.0
-ETH_BROADCAST_IP=192.168.0.255
-ETH_BASE_NETWORK_IP=192.168.0.0
 ETH_PREFIX=24
 
 # modulation and coding schemes
@@ -63,14 +61,11 @@ BW=MK2BW_10MHz
 RX_ANT=3
 RADIO=A
 
-SEED_INTERFACE=${ETH_INTERFACE}
-WAVE_DATA_MAC_ADDR=$(./generate_mac -interfaceName ${SEED_INTERFACE})
-
-# replace 4th octet of ${WAVE_DATA_BASE_IP} w/ last octet from MAC of ${SEED_INTERFACE}
-WAVE_DATA_IP_ADDR=$(./generate_ip -interfaceName ${SEED_INTERFACE} -baseIPAddr ${WAVE_DATA_BASE_IP} -identifierOctet 4)
-
-# replace 3rd octet of ${ETH_BASE_IP} w/ last octet from MAC of ${SEED_INTERFACE}
-ETH_IP_ADDR=$(./generate_ip -interfaceName ${SEED_INTERFACE} -baseIPAddr ${ETH_BASE_IP} -identifierOctet 3)
+WAVE_DATA_MAC_ADDR=$(./generate_mac -interfaceName ${ETH_INTERFACE})
+WAVE_DATA_IP_ADDR=$(./generate_ip -baseIPAddr ${WAVE_DATA_BASE_IP} -identifierOctet 4 -interfaceName ${ETH_INTERFACE})
+ETH_IP_ADDR=$(./generate_ip -baseIPAddr ${ETH_BASE_IP} -identifierOctet 3 -interfaceName ${ETH_INTERFACE})
+ETH_BROADCAST_IP=$(./generate_ip -baseIPAddr "${ETH_IP_ADDR}" -identifierOctet 4 -specificIdentifier 255)
+ETH_BASE_NETWORK_IP=$(./generate_ip -baseIPAddr "${ETH_IP_ADDR}" -identifierOctet 4 -specificIdentifier 0)
 
 #
 # things you should not change

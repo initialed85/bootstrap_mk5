@@ -8,7 +8,7 @@ import (
 )
 
 func main() {
-	interfaceName := flag.String("interfaceName", "", "name of interface to use as seed for MAC generation")
+	interfaceName := flag.String("interfaceName", "", "Name of interface to use as seed for MAC generation")
 
 	flag.Parse()
 
