@@ -32,7 +32,7 @@ ETH_PORT=13337
 WAVE_DATA_INTERFACE=wave-data
 WAVE_DATA_BASE_IP=172.16.137.x
 WAVE_DATA_NETMASK=255.255.255.0
-WAVE_DATA_PORT=13337
+WAVE_DATA_PORT=13338
 
 # MCS rate options (same as 802.11a)
 # MK2MCS_R12BPSK  - 6 Mbps
@@ -102,11 +102,24 @@ ifconfig ${WAVE_DATA_INTERFACE} "${WAVE_DATA_IP_ADDR}" netmask ${WAVE_DATA_NETMA
 
 ifconfig ${ETH_INTERFACE} "${ETH_IP_ADDR}" netmask ${ETH_NETMASK} broadcast "${ETH_BROADCAST_IP}"
 
-./add_routes -baseDstIPAddr "${ETH_NETWORK_IP}" -dstIdentifierOctet 3 -dstPrefix ${ETH_PREFIX} \
-  -baseGwIPAddr "${WAVE_DATA_BASE_GW_IP}" -gwIdentifierOctet 4 -startIdentifier 1 -stopIdentifier 254 \
-  -skipDstIPAddr "${ETH_NETWORK_IP}" -skipGwIPAddr "${WAVE_DATA_IP_ADDR}"
+./add_routes \
+  -baseDstIPAddr "${ETH_NETWORK_IP}" \
+  -dstIdentifierOctet 3 \
+  -dstPrefix ${ETH_PREFIX} \
+  -baseGwIPAddr "${WAVE_DATA_BASE_GW_IP}" \
+  -gwIdentifierOctet 4 \
+  -startIdentifier 1 \
+  -stopIdentifier 254 \
+  -skipDstIPAddr "${ETH_NETWORK_IP}" \
+  -skipGwIPAddr "${WAVE_DATA_IP_ADDR}"
 
-nohup ./castinator -leftIntfcName "${ETH_INTERFACE}" -leftUDPAddr "${ETH_BROADCAST_IP}":${ETH_PORT} \
-  -rightIntfcName "${WAVE_DATA_INTERFACE}" -rightUDPAddr "${WAVE_DATA_BROADCAST_IP}":${WAVE_DATA_PORT} >/tmp/castinator.log &
+pkill -9 -f castinator || true
+
+nohup ./castinator \
+  -leftIntfcName "${ETH_INTERFACE}" \
+  -leftUDPAddr "239.192.137.1":${ETH_PORT} \
+  -rightIntfcName "${WAVE_DATA_INTERFACE}" \
+  -rightUDPAddr "${WAVE_DATA_BROADCAST_IP}":${WAVE_DATA_PORT} \
+  >/tmp/castinator.log &
 
 popd

@@ -2,3 +2,5 @@
 deploy.sh
 dist
 venv
+deploy/find_mk5s
+deploy/hosts

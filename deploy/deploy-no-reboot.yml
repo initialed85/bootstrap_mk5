@@ -1,0 +1,22 @@
+---
+
+- hosts: cohda_mk5s
+  remote_user: root
+  become: yes
+  become_method: sudo
+
+  tasks:
+    - name: sync ./dist folder to /home/user/bootstrap_mk5
+      synchronize:
+        src: ../dist/
+        dest: /home/user/bootstrap_mk5/
+
+    - name: sync scripts/bootstrap.sh to /home/user/bootstrap_mk5/bootstrap.sh
+      synchronize:
+        src: ../scripts/bootstrap.sh
+        dest: /home/user/bootstrap_mk5/bootstrap.sh
+
+    - name: sync scripts/rc.local to /mnt/ubi/rc.local
+      synchronize:
+        src: ../scripts/rc.local
+        dest: /mnt/ubi/rc.local
