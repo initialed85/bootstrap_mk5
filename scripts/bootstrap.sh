@@ -34,6 +34,8 @@ WAVE_DATA_BASE_IP=172.16.137.x
 WAVE_DATA_NETMASK=255.255.255.0
 WAVE_DATA_PORT=13338
 
+GPS_PORT=13339
+
 # MCS rate options (same as 802.11a)
 # MK2MCS_R12BPSK  - 6 Mbps
 # MK2MCS_R34BPSK  - 9 Mbps
@@ -123,5 +125,9 @@ nohup ./castinator \
   -rightUDPListenAddr ":${WAVE_DATA_PORT}" \
   -rightUDPSendAddr "${WAVE_DATA_BROADCAST_IP}:${WAVE_DATA_PORT}" \
   >/tmp/castinator.log &
+
+pkill -9 -f locator || true
+
+locator -sendHost "${ETH_BROADCAST_IP}" -sendPort "${GPS_PORT}" >/tmp/locator.log &
 
 popd

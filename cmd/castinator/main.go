@@ -24,12 +24,12 @@ func waitForCtrlC() {
 func main() {
 	log.SetFlags(log.Ldate | log.Ltime | log.Lmicroseconds | log.Lshortfile)
 
-	leftIntfcName := flag.String("leftIntfcName", "", "")
-	leftUDPListenAddr := flag.String("leftUDPListenAddr", "", "")
-	leftUDPSendAddr := flag.String("leftUDPSendAddr", "", "")
-	rightIntfcName := flag.String("rightIntfcName", "", "")
-	rightUDPListenAddr := flag.String("rightUDPListenAddr", "", "")
-	rightUDPSendAddr := flag.String("rightUDPSendAddr", "", "")
+	leftIntfcName := flag.String("leftIntfcName", "", "left interface name")
+	leftUDPListenAddr := flag.String("leftUDPListenAddr", "", "left UDP listen addr")
+	leftUDPSendAddr := flag.String("leftUDPSendAddr", "", "left UDP send addr")
+	rightIntfcName := flag.String("rightIntfcName", "", "right interface name")
+	rightUDPListenAddr := flag.String("rightUDPListenAddr", "", "right UDP listen addr")
+	rightUDPSendAddr := flag.String("rightUDPSendAddr", "", "right UDP send addr")
 
 	flag.Parse()
 

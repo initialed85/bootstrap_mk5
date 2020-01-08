@@ -5,7 +5,6 @@ import (
 	"fmt"
 	"log"
 	"net"
-	"os"
 	"os/exec"
 	"strings"
 )
@@ -121,9 +120,7 @@ func main() {
 	}
 
 	if len(deduplicatedAddrs) == 0 {
-		fmt.Print("error: failed to find any MK5s")
-
-		os.Exit(1)
+		log.Fatal("error: failed to find any MK5s")
 	}
 
 	for _, addr := range deduplicatedAddrs {
