@@ -2,6 +2,17 @@
 
 This repo contains some tools and scripts to bootstrap a Cohda MK5 for 802.11p operation.
 
+## Context
+
+- Cohda MK5
+    - A V2X hardware platform developed by Cohda Wireless
+- 802.11p
+    - An 802.11a-based standard that provides fast peering by doing away with BSSes (everyone is always on 00:00:00:00:00:00)
+- eth0
+    - The wired interface on a Cohda MK5
+- wave-data
+    - The wireless interface on a Cohda MK5
+
 ## Goal
 
 The code in this repo seeks to set up a Cohda MK5 in 802.11p mode, operating as part of a /24 network (on the wireless side) and tying in a /24 network (on the wired side).
@@ -54,7 +65,7 @@ The problem is probably not a bad argument for a dynamic routing protocol, but t
         - Using the `add_routes` tool
             - Create routes for all 253 other possible nodes
         - Using the `castinator` tool
-            - Relay multicasts on port 13337 on eth0 to broadcasts on port 13338 on wave-data (and vice versa)
+            - Provide a bidirectional relay between UDP broadcasts on port 1337 on `eth0` and UDP broadcasts on port 13338 on `wave-data`
 
 ## What are the components?
 

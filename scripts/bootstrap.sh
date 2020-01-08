@@ -117,9 +117,11 @@ pkill -9 -f castinator || true
 
 nohup ./castinator \
   -leftIntfcName "${ETH_INTERFACE}" \
-  -leftUDPAddr "239.192.137.1":${ETH_PORT} \
+  -leftUDPListenAddr ":${ETH_PORT}" \
+  -leftUDPSendAddr "${ETH_BROADCAST_IP}:${ETH_PORT}" \
   -rightIntfcName "${WAVE_DATA_INTERFACE}" \
-  -rightUDPAddr "${WAVE_DATA_BROADCAST_IP}":${WAVE_DATA_PORT} \
+  -rightUDPListenAddr ":${WAVE_DATA_PORT}" \
+  -rightUDPSendAddr "${WAVE_DATA_BROADCAST_IP}:${WAVE_DATA_PORT}" \
   >/tmp/castinator.log &
 
 popd
