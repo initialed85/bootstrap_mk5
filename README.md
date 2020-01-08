@@ -27,7 +27,7 @@ So, if we look at a network of 3 radios:
         - 192.168.1.0/24 via 172.16.137.1
         - 192.168.2.0/24 via 172.16.137.2
         
-As you can see, there'll be a lot of static routes, so this is handled by some Go command line apps and some scripting.
+As you can see, there'll be a lot of static routes, so this is handled by some Go command line tools (that get cross-compiled for ARM, i.e. the Cohda MK5) and some scripting.
 
 The problem is probably not a bad argument for a dynamic routing protocol, but then you're at the mercy of that routing protocol's discovery intervals. 
 
@@ -42,47 +42,72 @@ The problem is probably not a bad argument for a dynamic routing protocol, but t
 
 ## What does it do?
 
-- `bootstrap.sh`
-    - Set the radio interface to operate in 802.11p
-    - Using the last octet of the `eth0` MAC
-        - Set the `wave-data` MAC
-        - Set the `wave-data` IP
-        - Set the `eth0` IP
-        - Create routes for all 253 other possible nodes
-        - relay multicasts on port 13337 on eth0 to broadcasts on port 13338 on wave-data (and vice versa)
+- With `rc.local` as the entrypoint
+    - Call `bootstrap.sh`
+        - Using the Cohda `chconfig` tool
+            - Set the radio interface to operate in 802.11p
+        - Using the `generate_mac` tool and the last octet of the `eth0` MAC
+            - Set the `wave-data` MAC
+        - Using the `generate_ip` tool and the last octet of the `eth0` MAC
+            - Set the `wave-data` IP
+            - Set the `eth0` IP
+        - Using the `add_routes` tool
+            - Create routes for all 253 other possible nodes
+        - Using the `castinator` tool
+            - Relay multicasts on port 13337 on eth0 to broadcasts on port 13338 on wave-data (and vice versa)
 
 ## What are the components?
 
-- `pkg`
+This project is laid out largely in the [Standard Go Project Layout](https://github.com/golang-standards/project-layout) format; here is an breakdown of the folders:
+
+- `cmd` (Go code that gets built to a command line executable)
+    - `add_routes`
+        - Tool to add routes (within some guidelines)
+    - `castinator`
+        - Tool to relay UDP packets from one address to another
+    - `find_mk5s`
+        - Tool used to discover MK5s plugged in locally via Ethernet
+    - `generate_ip`
+        - Tool to generate an IP address (from a MAC address, within some guidelines)
+    - `generate_mac`
+        - Tool to generate a MAC address (from a MAC address, within some guidelines)
+- `deploy` (Files and executables that relate to deployment)
+    - `ansible.cfg`
+        - Ansible config
+    - `deploy-no-reboot.yml`
+        - Ansible Playbook
+    - `hosts-base`
+        - Base template for Ansible hosts file
+- `dist` (Where artifacts to-be-deployed are built to)
+- `internal` (Go code used only by this repo)
+- `pkg` (Go code that can be used externally)
     - `generate`
         - Functions used to generate MACs and IPs
     - `route`
         - Functions used to add routes
-- `cmd`
-    - `generate_mac`
-        - Command line tool to generate a MAC address (from a MAC address)
-    - `generate_ip`
-        - Command line tool to generate an IP address (from a MAC address)
-    - `add_routes`
-        - Command line tool to add routes (within some guidelines)
-    - `castinator`
-        - Command line tool to relay UDP packets from one address to another
 - `scripts`
     - `bootstrap.sh`
-        - The script that pulls it all together
+        - The script that pulls everything together
+    - `rc.local`
+        - The entrypoint script
+    
 
-## What needs to be deployed?
+## What gets deployed?
 
-- `/home/user`
-    - `bootstrap_mk5`
-        - `generate_mac`
-        - `generate_ip`
-        - `add_routes`
-        - `castinator`
-        - `bootstrap.sh`
+    ./dist/generate_mac -> /home/user/bootstrap_mk5/generate_mac
+    ./dist/castinator -> /home/user/bootstrap_mk5/castinator
+    ./dist/add_routes -> /home/user/bootstrap_mk5/add_routes
+    ./dist/generate_ip -> /home/user/bootstrap_mk5/generate_ip
+    
+    ./scripts/bootstrap.sh -> /home/user/bootstrap_mk5/bootstrap.sh
 
-Additionally, `/mnt/ubi/rc.local` must exist and must call to `/home/user/bootstrap_mk5/bootstrap.sh`
+    ./dist/build_hash.txt -> /home/user/bootstrap_mk5/build_hash.txt
+    ./dist/build_date.txt -> /home/user/bootstrap_mk5/build_date.txt
+    
+    ./scripts/rc.local -> /mnt/ubi/rc.local
 
+    ./deploy/deploy_date.txt -> /home/user/bootstrap_mk5/deploy_date.txt
+    
 ## How do I build it?
 
 For your native platform:
@@ -92,7 +117,7 @@ For your native platform:
 For a Linux, ARM-based platform:
 
     GOOS=linux GOARCH=arm ./build.sh
-
+    
 ## How do I test it?
 
 Heh, TBD.
