@@ -90,7 +90,6 @@ This project is laid out largely in the [Standard Go Project Layout](https://git
         - The script that pulls everything together
     - `rc.local`
         - The entrypoint script
-    
 
 ## What gets deployed?
 
@@ -131,3 +130,30 @@ Ensure you've built for the ARM-based platform:
 Then run the deploy script
 
     ./deploy.sh
+    
+NOTE: You may pass the optional `reboot` flag to `deploy.sh`; e.g.: `./deploy.sh reboot`
+
+## What might I want to change?
+
+- The Cohda IPv6 link local address prefix for discovery (e.g. if the hardware revision changes)
+    - `cmd/find_mk5s/main.go`
+        - `CohdaIPv6AddrPrefix = "fe80::6e5:"`
+- The Cohda MK5 credentials for deployment
+    - `deploy/hosts-base`
+        - `ansible_ssh_user=user`
+        - `ansible_ssh_pass=user`
+- The IP and MAC address specifics in `scripts/bootstrap.sh`
+    - `ETH_INTERFACE=eth0`
+    - `ETH_BASE_IP=192.168.x.1`
+    - `ETH_NETMASK=255.255.255.0`
+    - `ETH_PREFIX=24`
+    - `WAVE_DATA_INTERFACE=wave-data`
+    - `WAVE_DATA_BASE_IP=172.16.137.x`
+    - `WAVE_DATA_NETMASK=255.255.255.0`
+- The rate and channel specifics in `scripts/bootstrap.sh`
+    - `DEFAULT_MCS=MK2MCS_R34QAM64 # 54 Mbps`
+    - `DEFAULT_TX_POWER=5          # 2.5 dBm (5 * 0.5 dBm)`
+    - `CHANNEL_NUMBER=174          # ETSI = 23 dBm, SCH; IEEE = 33 dBm, SCH`
+- The multicast-to-broadcast relay specifics in `scripts/bootstrap.sh`
+    - `ETH_PORT=13337`
+    - `WAVE_DATA_PORT=13338`

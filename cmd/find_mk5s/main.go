@@ -10,6 +10,11 @@ import (
 	"strings"
 )
 
+const (
+	IPv6LinkLocalAddrPrefix = "fe80::"
+	CohdaIPv6AddrPrefix     = "fe80::6e5:"
+)
+
 type PossibleInterface struct {
 	Intfc string
 	Addrs []string
@@ -34,7 +39,7 @@ func getPossibleInterfaces() ([]PossibleInterface, error) {
 
 		possibleAddrs := make([]string, 0)
 		for _, addr := range addrs {
-			if !strings.Contains(addr.String(), "fe80:") {
+			if !strings.HasPrefix(addr.String(), IPv6LinkLocalAddrPrefix) {
 				continue
 			}
 
@@ -93,7 +98,7 @@ func main() {
 		}
 
 		for _, line := range strings.Split(stdout, "\n") {
-			if !strings.Contains(line, "fe80::6e5:") { // Cohda MK5 link link prefix
+			if !strings.Contains(line, CohdaIPv6AddrPrefix) {
 				continue
 			}
 

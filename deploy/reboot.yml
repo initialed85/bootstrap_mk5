@@ -1,0 +1,11 @@
+---
+
+- hosts: cohda_mk5s
+  remote_user: root
+  become: yes
+  become_method: sudo
+
+  tasks:
+    - name: reboot MK5
+      reboot:
+        reboot_timeout: 300
