@@ -65,7 +65,9 @@ The problem is probably not a bad argument for a dynamic routing protocol, but t
         - Using the `add_routes` tool
             - Create routes for all 253 other possible nodes
         - Using the `castinator` tool
-            - Provide a bidirectional relay between UDP broadcasts on port 1337 on `eth0` and UDP broadcasts on port 13338 on `wave-data`
+            - Provide a bidirectional relay between UDP broadcasts on port 13337 on `eth0` and UDP broadcasts on port 13338 on `wave-data`
+        - Using the `locator` tool
+            - Forward `TPV` packets from `gpsd` as UDP broadcasts port 13339 on `eth0`
 
 ## What are the components?
 
@@ -82,6 +84,8 @@ This project is laid out largely in the [Standard Go Project Layout](https://git
         - Tool to generate an IP address (from a MAC address, within some guidelines)
     - `generate_mac`
         - Tool to generate a MAC address (from a MAC address, within some guidelines)
+    - `locator`
+        - Tool to receive `TPV` packets from `gpsd` and send them a UDP address
 - `deploy` (Files and executables that relate to deployment)
     - `ansible.cfg`
         - Ansible config
@@ -168,3 +172,5 @@ NOTE: You may pass the optional `reboot` flag to `deploy.sh`; e.g.: `./deploy.sh
 - The multicast-to-broadcast relay specifics in `scripts/bootstrap.sh`
     - `ETH_PORT=13337`
     - `WAVE_DATA_PORT=13338`
+- The GPS forwarder specifics in `scripts/bootstrap.sh`
+    - `GPS_PORT=13339`

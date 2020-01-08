@@ -128,6 +128,9 @@ nohup ./castinator \
 
 pkill -9 -f locator || true
 
-locator -sendHost "${ETH_BROADCAST_IP}" -sendPort "${GPS_PORT}" >/tmp/locator.log &
+locator \
+  -sendHost "${ETH_BROADCAST_IP}" \
+  -sendPort "${GPS_PORT}" \
+  >/tmp/locator.log &
 
 popd
