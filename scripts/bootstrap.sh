@@ -124,13 +124,13 @@ nohup ./castinator \
   -rightIntfcName "${WAVE_DATA_INTERFACE}" \
   -rightUDPListenAddr ":${WAVE_DATA_PORT}" \
   -rightUDPSendAddr "${WAVE_DATA_BROADCAST_IP}:${WAVE_DATA_PORT}" \
-  >/tmp/castinator.log &
+  >/tmp/castinator.log 2>&1 &
 
 pkill -9 -f locator || true
 
-locator \
+nohup ./locator \
   -sendHost "${ETH_BROADCAST_IP}" \
   -sendPort "${GPS_PORT}" \
-  >/tmp/locator.log &
+  >/tmp/locator.log 2>&1 &
 
 popd
