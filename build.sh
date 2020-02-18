@@ -3,17 +3,21 @@
 set -x
 set -e
 
+echo "handling dependencies..."
+go mod download
+echo ""
+
 echo "cleaning..."
 rm -fr dist >/dev/null 2>&1 || true
 mkdir -p dist
 echo ""
 
 echo "building tools to be deployed..."
-go build -v -o dist/generate_mac cmd/generate_mac/main.go
-go build -v -o dist/generate_ip cmd/generate_ip/main.go
-go build -v -o dist/add_routes cmd/add_routes/main.go
-go build -v -o dist/castinator cmd/castinator/main.go
-go build -v -o dist/locator cmd/locator/main.go
+GOOS=linux GOARCH=arm go build -v -o dist/generate_mac cmd/generate_mac/main.go
+GOOS=linux GOARCH=arm go build -v -o dist/generate_ip cmd/generate_ip/main.go
+GOOS=linux GOARCH=arm go build -v -o dist/add_routes cmd/add_routes/main.go
+GOOS=linux GOARCH=arm go build -v -o dist/castinator cmd/castinator/main.go
+GOOS=linux GOARCH=arm go build -v -o dist/locator cmd/locator/main.go
 echo ""
 
 echo "hashing and stamping..."
